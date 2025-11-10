@@ -3,11 +3,7 @@
   "functions": {
     "api/index.ts": {
       "runtime": "nodejs22.x",
-      "includeFiles": [
-        "backend-ts/src/**",
-        "backend-ts/tsconfig.json",
-        "backend-ts/package.json"
-      ]
+      "includeFiles": "backend-ts/src/**"
     }
   },
   "installCommand": "npm install",
