@@ -11,6 +11,15 @@
     "dev": "vercel dev",
     "dev:frontend": "npm run dev --workspace frontend",
     "dev:backend": "cd backend-ts && vercel dev --listen 4000"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.48.0",
+    "formidable": "^3.5.4",
+    "mammoth": "^1.7.3",
+    "openai": "^4.77.0",
+    "pdf-parse": "^1.1.1",
+    "uuid": "^10.0.0",
+    "zod": "^3.23.8"
   }
 }
 
