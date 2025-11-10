@@ -4,7 +4,7 @@ End-to-end skeleton for the Legal AI Assistant MVP described in the PRD. Реп�
 
 ## Project Structure
 
-- `api/` — Serverless функции на Vercel (`api/[...route].ts` + вспомогательные модули в `api/lib`).
+- `api/` — Serverless функции на Vercel (file-based роутинг `api/cases/*`, `api/chats/*` и общие сервисы в `api/lib`).
 - `frontend/` — Vite React application with legal chat UI components and streaming client.
 - `docs/` — Architecture notes and design references.
 

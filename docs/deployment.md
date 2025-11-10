@@ -20,8 +20,8 @@
 
 1. В настройках проекта установите **Root Directory** = `.` (корень репозитория), Framework preset — `Vite` или `Other`.
 2. `vercel.json` уже описывает:
-   - build: `npm run build` → собирает фронтенд (результат выходит в `dist/` в корне),
-   - serverless-функции берутся напрямую из `api/` (вся логика лежит в `api/lib`).
+   - build: `npm run build` → собирает фронтенд (результат выходит в `frontend/dist`),
+   - serverless-функции берутся напрямую из файлов `api/cases/**`, `api/chats/**`; общая логика вынесена в `api/lib`.
 3. Перед первым деплоем локально:
    ```bash
    npm install
@@ -32,7 +32,7 @@
    - `APP_SUPABASE_URL`, `APP_SUPABASE_SERVICE_ROLE_KEY`, `APP_SUPABASE_STORAGE_BUCKET`
    - `APP_OPENAI_API_KEY`, опционально `APP_OPENAI_API_BASE`, `APP_SYSTEM_PROMPT`
    - `APP_OPENAI_MODEL`, `APP_EMBEDDINGS_MODEL`, `APP_CHUNK_SIZE`, `APP_CHUNK_OVERLAP`, `APP_MAX_CONTEXT_CHUNKS`
-   - `VITE_APP_ENV`, `VITE_INITIAL_CASE_TITLE` (при необходимости). `VITE_API_BASE_URL` можно не задавать — по умолчанию `/api`.
+   - `VITE_INITIAL_CASE_TITLE` (опционально для кастомного названия первого дела). `VITE_API_BASE_URL` можно не задавать — по умолчанию `/api`.
 
 ## Backend Notes
 
