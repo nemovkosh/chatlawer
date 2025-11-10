@@ -2,30 +2,10 @@ import type { VercelRequest, VercelResponse } from "@vercel/node";
 import formidable from "formidable";
 import { z } from "zod";
 
-import {
-  createCase,
-  deleteCase,
-  getCase,
-  listCases,
-  updateCase,
-} from "../backend-ts/src/services/caseService.js";
-import {
-  createChat,
-  deleteChat,
-  getChat,
-  listChats,
-} from "../backend-ts/src/services/chatService.js";
-import {
-  deleteDocument,
-  listDocuments,
-  storeDocument,
-} from "../backend-ts/src/services/documentService.js";
-import {
-  createMessage,
-  getContextChunks,
-  listMessages,
-  streamAssistantReply,
-} from "../backend-ts/src/services/messageService.js";
+import { createCase, deleteCase, getCase, listCases, updateCase } from "../backend-ts/dist/services/caseService.js";
+import { createChat, deleteChat, getChat, listChats } from "../backend-ts/dist/services/chatService.js";
+import { deleteDocument, listDocuments, storeDocument } from "../backend-ts/dist/services/documentService.js";
+import { createMessage, getContextChunks, listMessages, streamAssistantReply } from "../backend-ts/dist/services/messageService.js";
 
 const caseCreateSchema = z.object({
   title: z.string().min(1),

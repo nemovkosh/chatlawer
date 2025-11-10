@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vercel dev",
     "lint": "eslint . --ext .ts",
+    "build": "tsc --project tsconfig.build.json",
     "test": "echo \"No tests yet\""
   },
   "dependencies": {
