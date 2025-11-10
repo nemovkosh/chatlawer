@@ -1,5 +1,5 @@
 import clsx from "clsx";
-import { ChatSummary, CaseSummary } from "../types";
+import type { ChatSummary, CaseSummary } from "../types";
 
 interface CaseSidebarProps {
   cases: CaseSummary[];

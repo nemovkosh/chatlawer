@@ -1,4 +1,4 @@
-import { DocumentSummary } from "../types";
+import type { DocumentSummary } from "../types";
 
 interface DocumentPanelProps {
   documents: DocumentSummary[];

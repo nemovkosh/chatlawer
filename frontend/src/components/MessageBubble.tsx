@@ -1,7 +1,7 @@
 import clsx from "clsx";
-import { Message } from "../types";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
+import type { Message } from "../types";
 
 interface MessageBubbleProps {
   message: Message;

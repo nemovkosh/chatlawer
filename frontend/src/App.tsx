@@ -13,7 +13,7 @@ import {
 import { CaseSidebar } from "./components/CaseSidebar";
 import { ChatWorkspace } from "./components/ChatWorkspace";
 import { DocumentPanel } from "./components/DocumentPanel";
-import { CaseSummary, ChatSummary, DocumentSummary, Message } from "./types";
+import type { CaseSummary, ChatSummary, DocumentSummary, Message } from "./types";
 
 const DEMO_USER_ID = "demo-user";
 
