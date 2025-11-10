@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-import { defaultSystemPrompt } from "./systemPrompt.js";
+import { defaultSystemPrompt } from "./systemPrompt";
 
 const SettingsSchema = z.object({
   ENVIRONMENT: z.enum(["local", "development", "staging", "production"]).default("local"),

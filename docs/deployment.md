@@ -21,7 +21,7 @@
 1. В настройках проекта установите **Root Directory** = `.` (корень репозитория), Framework preset — `Vite` или `Other`.
 2. `vercel.json` уже описывает:
    - build: `npm run build` → собирает фронтенд (результат выходит в `dist/` в корне),
-   - API-функция `api/index.ts` с зависимостями из `backend-ts`.
+   - serverless-функции берутся напрямую из `api/` (вся логика лежит в `api/lib`).
 3. Перед первым деплоем локально:
    ```bash
    npm install
@@ -45,8 +45,7 @@
 - Перед продакшеном:
   ```bash
   npm install
-  npm run build           # vite build фронтенда
-  npx tsc --noEmit --project backend-ts/tsconfig.json
+  npm run build           # vite build фронтенда + проверка API
   ```
 - Убедитесь, что RAG-цепочка (загрузка документа → чат) проходит на `vercel dev` с актуальными ключами.
 

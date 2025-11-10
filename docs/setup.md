@@ -6,7 +6,7 @@
    - Apply tables according to the PRD schema (`cases`, `documents`, `chats`, `messages`, `document_embeddings`).
 
 2. **Environment Variables**
-   - Backend (TypeScript): скопируйте `backend-ts/env.example` в `backend-ts/.env.local` (или задайте переменные в Vercel). Требуются `APP_SUPABASE_*`, `APP_OPENAI_API_KEY`, `APP_SUPABASE_STORAGE_BUCKET`, опционально `APP_SYSTEM_PROMPT`.
+   - API: скопируйте `env.example` в `.env.local` (используется `vercel dev`) или задайте переменные в Vercel → Project Settings. Нужны `APP_SUPABASE_*`, `APP_OPENAI_API_KEY`, `APP_SUPABASE_STORAGE_BUCKET`, при желании `APP_SYSTEM_PROMPT`.
    - Frontend: скопируйте `frontend/env.example` в `frontend/.env.local` и при необходимости обновите `VITE_APP_ENV`, `VITE_INITIAL_CASE_TITLE` (по умолчанию `VITE_API_BASE_URL=/api` работает без изменений).
 
 3. **Local Development**
@@ -18,6 +18,5 @@
    - Для крупного объёма документов перенесите парсинг/эмбеддинги в фоновый воркер (Supabase Edge Functions, очереди).
 
 5. **Testing**
-   - Backend (пока нет автотестов; планируются e2e/интеграционные).
-   - Frontend: `npm run build` и добавить unit/e2e по мере готовности.
+   - Пока автоматических тестов нет; для smoke-проверки выполните `npm run build` и `vercel dev`, затем прогоните ключевые пользовательские сценарии вручную.
 

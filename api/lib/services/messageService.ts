@@ -1,7 +1,7 @@
-import type { Message, MessageRole } from "../types/supabase.js";
-import { settings } from "../config.js";
-import { openaiClient } from "../openai.js";
-import { supabaseAdmin } from "../supabase.js";
+import type { Message, MessageRole } from "../types";
+import { settings } from "../config";
+import { openaiClient } from "../openai";
+import { supabaseAdmin } from "../supabase";
 
 export async function listMessages(chatId: string): Promise<Message[]> {
   const { data, error } = await supabaseAdmin
@@ -36,10 +36,7 @@ export async function createMessage({
 }
 
 export async function getContextChunks(caseId: string): Promise<string[]> {
-  const { data, error } = await supabaseAdmin
-    .from("documents")
-    .select("id")
-    .eq("case_id", caseId);
+  const { data, error } = await supabaseAdmin.from("documents").select("id").eq("case_id", caseId);
   if (error) {
     throw error;
   }

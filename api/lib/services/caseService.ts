@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "../supabase.js";
-import type { Case, TablesInsert } from "../types/supabase.js";
+import { supabaseAdmin } from "../supabase";
+import type { Case, TablesInsert } from "../types";
 
 export async function listCases(userId: string): Promise<Case[]> {
   const { data, error } = await supabaseAdmin
@@ -22,11 +22,7 @@ export async function createCase(payload: TablesInsert["cases"]): Promise<Case> 
 }
 
 export async function getCase(caseId: string): Promise<Case | null> {
-  const { data, error } = await supabaseAdmin
-    .from("cases")
-    .select("*")
-    .eq("id", caseId)
-    .maybeSingle();
+  const { data, error } = await supabaseAdmin.from("cases").select("*").eq("id", caseId).maybeSingle();
   if (error) {
     throw error;
   }

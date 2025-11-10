@@ -1,5 +1,5 @@
-import { supabaseAdmin } from "../supabase.js";
-import type { Chat, TablesInsert } from "../types/supabase.js";
+import { supabaseAdmin } from "../supabase";
+import type { Chat, TablesInsert } from "../types";
 
 export async function listChats(caseId: string): Promise<Chat[]> {
   const { data, error } = await supabaseAdmin
@@ -22,11 +22,7 @@ export async function createChat(payload: TablesInsert["chats"]): Promise<Chat> 
 }
 
 export async function getChat(chatId: string): Promise<Chat | null> {
-  const { data, error } = await supabaseAdmin
-    .from("chats")
-    .select("*")
-    .eq("id", chatId)
-    .maybeSingle();
+  const { data, error } = await supabaseAdmin.from("chats").select("*").eq("id", chatId).maybeSingle();
   if (error) {
     throw error;
   }

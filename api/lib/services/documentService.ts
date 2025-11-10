@@ -1,11 +1,11 @@
 import { randomUUID } from "node:crypto";
 import type { File } from "formidable";
 
-import { settings } from "../config.js";
-import { supabaseAdmin } from "../supabase.js";
-import type { Document, TablesInsert } from "../types/supabase.js";
-import { destroyTempFile, extractTextFromFile, fileToBuffer } from "./documentExtraction.js";
-import { upsertEmbeddings } from "./embeddingService.js";
+import { settings } from "../config";
+import { supabaseAdmin } from "../supabase";
+import type { Document, TablesInsert } from "../types";
+import { destroyTempFile, extractTextFromFile, fileToBuffer } from "./documentExtraction";
+import { upsertEmbeddings } from "./embeddingService";
 
 export async function listDocuments(caseId: string): Promise<Document[]> {
   const { data, error } = await supabaseAdmin
@@ -60,7 +60,7 @@ export async function storeDocument({
 
     const { data: signedUrlData, error: urlError } = await supabaseAdmin.storage
       .from(settings.SUPABASE_STORAGE_BUCKET)
-      .createSignedUrl(objectKey, 60 * 60 * 24 * 7); // 7 days
+      .createSignedUrl(objectKey, 60 * 60 * 24 * 7);
 
     if (urlError) {
       throw urlError;

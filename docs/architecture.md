@@ -8,12 +8,11 @@
   - `DocumentPanel` to surface uploaded case materials for quick access.
   - `services/api.ts` centralizes REST interactions with the backend, supporting streaming tokens.
 
-- **Backend** — TypeScript serverless API (Vercel + @vercel/node):
+- **Backend** — TypeScript serverless API (Vercel serverless functions):
   - Маршруты `/cases`, `/cases/:id/chats`, `/cases/:id/documents`, `/chats/:id/messages`, `/chats/:id/messages/stream`.
-  - `supabase.ts` использует service role key для CRUD и Supabase Storage.
-  - `documentService` — извлечение текста из PDF (`pdf-parse`), DOCX (`mammoth`), TXT, сохранение файлов в Supabase Storage; изображения отдаются напрямую в GPT-vision без локального OCR.
-  - `messageService` — Retrieval-Augmented Generation: загрузка контекстных чанков, подмешивание изображений в запрос, стриминг GPT-5 mini, запись ассистентских ответов.
-  - Вся логика — в Node runtime, совместимом с Vercel serverless.
+  - Вся логика лежит в `api/lib` (`config`, `supabase`, `openai`, `services/*`), поэтому дополнительная сборка не требуется.
+  - `documentService` извлекает текст из PDF (`pdf-parse`), DOCX (`mammoth`), TXT; изображения передаются напрямую в GPT-vision.
+  - `messageService` реализует Retrieval-Augmented Generation: выборка контекста, загрузка изображений, стрим GPT-5 mini, запись ответов.
 
 - **Supabase** — Single managed stack:
   - Auth (future) for user management.

@@ -1,7 +1,7 @@
-import type { TablesInsert } from "../types/supabase.js";
-import { settings } from "../config.js";
-import { openaiClient } from "../openai.js";
-import { supabaseAdmin } from "../supabase.js";
+import type { TablesInsert } from "../types";
+import { settings } from "../config";
+import { openaiClient } from "../openai";
+import { supabaseAdmin } from "../supabase";
 
 function chunkText(text: string): string[] {
   const { CHUNK_SIZE, CHUNK_OVERLAP } = settings;

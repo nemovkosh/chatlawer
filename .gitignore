@@ -30,7 +30,3 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-backend-ts/node_modules/
-backend-ts/.vercel/
-backend-ts/.turbo/
-

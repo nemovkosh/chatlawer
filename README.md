@@ -4,7 +4,7 @@ End-to-end skeleton for the Legal AI Assistant MVP described in the PRD. Реп�
 
 ## Project Structure
 
-- `backend-ts/` — TypeScript serverless backend (Vercel functions) with Supabase + OpenAI integration.
+- `api/` — Serverless функции на Vercel (`api/[...route].ts` + вспомогательные модули в `api/lib`).
 - `frontend/` — Vite React application with legal chat UI components and streaming client.
 - `docs/` — Architecture notes and design references.
 
@@ -13,13 +13,13 @@ End-to-end skeleton for the Legal AI Assistant MVP described in the PRD. Реп�
 ### Install & Dev
 
 ```bash
-npm install               # устанавливает зависимости workspaces (frontend + backend-ts)
-cp backend-ts/env.example backend-ts/.env.local
+npm install
+cp env.example .env.local
 cp frontend/env.example frontend/.env.local
 npm run dev               # vercel dev: фронт доступен на 5173, API на http://localhost:3000/api
 ```
 
-- **Backend secrets** (`APP_*`) задаются в `backend-ts/.env.local` или в Vercel Project Settings.
+- **Backend secrets** (`APP_*`) задаются в `.env.local` прямо в корне или в Vercel Project Settings.
 - **Frontend env** (`VITE_*`) — в `frontend/.env.local`. По умолчанию `VITE_API_BASE_URL=/api`, поэтому в продакшене фронт обращается к тому же домену.
 
 ## Key Features
