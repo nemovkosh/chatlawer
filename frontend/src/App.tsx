@@ -15,9 +15,8 @@ import { ChatWorkspace } from "./components/ChatWorkspace";
 import { DocumentPanel } from "./components/DocumentPanel";
 import type { CaseSummary, ChatSummary, DocumentSummary, Message } from "./types";
 
-const DEMO_USER_ID = "demo-user";
-
 function App() {
+  const [userId, setUserId] = useState<string | null>(null);
   const [cases, setCases] = useState<CaseSummary[]>([]);
   const [chats, setChats] = useState<ChatSummary[]>([]);
   const [documents, setDocuments] = useState<DocumentSummary[]>([]);
@@ -28,10 +27,19 @@ function App() {
   const [streamingContent, setStreamingContent] = useState<string>("");
 
   useEffect(() => {
-    fetchCases(DEMO_USER_ID)
+    const defaultUser = import.meta.env.VITE_DEFAULT_USER_ID ?? null;
+    setUserId(defaultUser);
+  }, []);
+
+  useEffect(() => {
+    if (!userId) {
+      setCases([]);
+      return;
+    }
+    fetchCases(userId)
       .then((data) => setCases(data))
       .catch((error) => console.error("Failed to load cases", error));
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!activeCaseId && cases.length) {
@@ -123,10 +131,20 @@ function App() {
     }
   }
 
+  const handleRefreshCases = () => {
+    if (!userId) {
+      return;
+    }
+    fetchCases(userId)
+      .then(setCases)
+      .catch((error) => console.error("Failed to refresh cases", error));
+  };
+
   return (
     <div className="flex h-screen w-full bg-slate-100">
       <CaseSidebar
         cases={cases}
+        onRefreshCases={handleRefreshCases}
         chats={chats}
         activeCaseId={activeCaseId}
         activeChatId={activeChatId}

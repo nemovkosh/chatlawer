@@ -3,6 +3,7 @@ import type { ChatSummary, CaseSummary } from "../types";
 
 interface CaseSidebarProps {
   cases: CaseSummary[];
+  onRefreshCases: () => void;
   activeCaseId: string | null;
   chats: ChatSummary[];
   activeChatId: string | null;
@@ -13,6 +14,7 @@ interface CaseSidebarProps {
 
 export function CaseSidebar({
   cases,
+  onRefreshCases,
   activeCaseId,
   chats,
   activeChatId,
@@ -23,7 +25,16 @@ export function CaseSidebar({
   return (
     <aside className="flex w-80 shrink-0 flex-col border-r border-slate-200 bg-white">
       <div className="px-5 py-4">
-        <h2 className="text-lg font-semibold text-slate-800">Cases</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-slate-800">Cases</h2>
+          <button
+            className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:bg-slate-100"
+            onClick={onRefreshCases}
+            type="button"
+          >
+            Refresh
+          </button>
+        </div>
       </div>
       <div className="flex-1 overflow-y-auto">
         {cases.map((legalCase) => {
