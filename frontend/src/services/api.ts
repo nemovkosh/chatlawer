@@ -26,12 +26,11 @@ export async function fetchChats(caseId: string) {
 }
 
 export async function createChat(caseId: string, title: string) {
-  return request<ChatSummary>(
-    `${API_BASE_URL}/cases/${caseId}/chats?title=${encodeURIComponent(title)}`,
-    {
-      method: "POST",
-    }
-  );
+  return request<ChatSummary>(`${API_BASE_URL}/cases/${caseId}/chats`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ title }),
+  });
 }
 
 export async function fetchDocuments(caseId: string) {
