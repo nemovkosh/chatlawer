@@ -20,7 +20,7 @@
 
 1. В настройках проекта установите **Root Directory** = `.` (корень репозитория), Framework preset — `Vite` или `Other`.
 2. `vercel.json` уже описывает:
-   - build: `npm run build` → собирает фронтенд (`frontend/dist`),
+   - build: `npm run build` → собирает фронтенд (результат выходит в `dist/` в корне),
    - API-функция `api/index.ts` с зависимостями из `backend-ts`.
 3. Перед первым деплоем локально:
    ```bash
