@@ -16,6 +16,12 @@ import { DocumentPanel } from "./components/DocumentPanel";
 import type { CaseSummary, ChatSummary, DocumentSummary, Message } from "./types";
 import { createCaseWithChat } from "./services/bootstrap";
 
+const USER_STORAGE_KEY = "legal-ai-user-id";
+const generateCaseTitle = () =>
+  import.meta.env.VITE_INITIAL_CASE_TITLE ||
+  `Дело ${new Date().toLocaleString()}`;
+const generateChatTitle = () => `Чат ${new Date().toLocaleTimeString()}`;
+
 function App() {
   const [userId, setUserId] = useState<string | null>(null);
   const [cases, setCases] = useState<CaseSummary[]>([]);
@@ -28,13 +34,13 @@ function App() {
   const [streamingContent, setStreamingContent] = useState<string>("");
 
   useEffect(() => {
-    const stored = localStorage.getItem("legal-ai-user-id");
+    const stored = localStorage.getItem(USER_STORAGE_KEY);
     if (stored) {
       setUserId(stored);
       return;
     }
     const newUserId = crypto.randomUUID();
-    localStorage.setItem("legal-ai-user-id", newUserId);
+    localStorage.setItem(USER_STORAGE_KEY, newUserId);
     setUserId(newUserId);
   }, []);
 
@@ -42,16 +48,33 @@ function App() {
     if (!userId) {
       return;
     }
-    fetchCases(userId)
-      .then((data) => setCases(data))
-      .catch((error) => console.error("Failed to load cases", error));
+    (async () => {
+      try {
+        const existingCases = await fetchCases(userId);
+        if (existingCases.length === 0) {
+          const { caseItem, chat } = await createCaseWithChat(
+            userId,
+            generateCaseTitle(),
+            generateChatTitle(),
+          );
+          setCases([caseItem]);
+          setActiveCaseId(caseItem.id);
+          setChats([chat]);
+          setActiveChatId(chat.id);
+          setDocuments([]);
+          setMessages([]);
+        } else {
+          setCases(existingCases);
+          if (!activeCaseId) {
+            setActiveCaseId(existingCases[0].id);
+          }
+        }
+      } catch (error) {
+        console.error("Failed to load or bootstrap cases", error);
+      }
+    })();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId]);
-
-  useEffect(() => {
-    if (!activeCaseId && cases.length) {
-      setActiveCaseId(cases[0].id);
-    }
-  }, [cases, activeCaseId]);
 
   useEffect(() => {
     if (!activeCaseId) {
@@ -72,7 +95,7 @@ function App() {
     fetchDocuments(activeCaseId)
       .then(setDocuments)
       .catch((error) => console.error("Failed to load documents", error));
-  }, [activeCaseId]);
+  }, [activeCaseId, activeChatId]);
 
   useEffect(() => {
     if (!activeChatId) {
@@ -83,6 +106,48 @@ function App() {
       .then(setMessages)
       .catch((error) => console.error("Failed to load messages", error));
   }, [activeChatId]);
+
+  const ensureChatAvailable = useCallback(async (): Promise<string | null> => {
+    if (activeCaseId && activeChatId) {
+      return activeChatId;
+    }
+    if (!userId) {
+      console.warn("No user in context; cannot create case.");
+      return null;
+    }
+
+    if (!cases.length) {
+      const { caseItem, chat } = await createCaseWithChat(
+        userId,
+        generateCaseTitle(),
+        generateChatTitle(),
+      );
+      setCases([caseItem]);
+      setActiveCaseId(caseItem.id);
+      setChats([chat]);
+      setActiveChatId(chat.id);
+      setDocuments([]);
+      setMessages([]);
+      return chat.id;
+    }
+
+    const targetCaseId = activeCaseId ?? cases[0].id;
+    if (!activeCaseId) {
+      setActiveCaseId(targetCaseId);
+    }
+
+    if (chats.length > 0) {
+      const firstChatId = chats[0].id;
+      setActiveChatId(firstChatId);
+      return firstChatId;
+    }
+
+    const newChat = await createChat(targetCaseId, generateChatTitle());
+    setChats([newChat]);
+    setActiveChatId(newChat.id);
+    setMessages([]);
+    return newChat.id;
+  }, [activeCaseId, activeChatId, cases, chats, userId]);
 
   const combinedMessages = useMemo(() => {
     if (!streamingContent) {
@@ -100,90 +165,57 @@ function App() {
     ];
   }, [messages, streamingContent, activeChatId]);
 
-  async function handleSendMessage(content: string) {
-    const ensureChat = async (): Promise<string | null> => {
-      if (activeCaseId && activeChatId) {
-        return activeChatId;
+  const handleSendMessage = useCallback(
+    async (content: string) => {
+      const resolvedChatId = await ensureChatAvailable();
+      if (!resolvedChatId) {
+        return;
       }
-      if (!userId) {
-        console.warn("No user in context; cannot create case.");
-        return null;
+
+      setIsStreaming(true);
+      try {
+        const userMessage = await createMessage(resolvedChatId, { role: "user", content });
+        setMessages((prev) => [...prev, userMessage]);
+        setStreamingContent("");
+
+        await streamAssistantMessage(resolvedChatId, { role: "user", content }, (token) => {
+          setStreamingContent((prev) => prev + token);
+        });
+
+        setStreamingContent("");
+        const latestMessages = await fetchMessages(resolvedChatId);
+        setMessages(latestMessages);
+      } catch (error) {
+        console.error("Failed to send message", error);
+        setStreamingContent("An error occurred while generating a response. Please try again.");
+      } finally {
+        setIsStreaming(false);
       }
-      if (!cases.length) {
-        const caseTitle =
-          import.meta.env.VITE_INITIAL_CASE_TITLE ||
-          `Первое дело ${new Date().toLocaleString()}`;
-        const chatTitle = `Чат ${new Date().toLocaleTimeString()}`;
-        const { caseItem, chat } = await createCaseWithChat(userId, caseTitle, chatTitle);
-        setCases([caseItem]);
-        setActiveCaseId(caseItem.id);
-        setChats([chat]);
-        setActiveChatId(chat.id);
-        setDocuments([]);
-        setMessages([]);
-        return chat.id;
-      }
-      const targetCaseId = activeCaseId ?? cases[0]?.id ?? null;
-      if (!targetCaseId) {
-        return null;
-      }
-      if (!activeCaseId) {
-        setActiveCaseId(targetCaseId);
-      }
-      const chatTitle = `Чат ${new Date().toLocaleTimeString()}`;
-      const newChat = await createChat(targetCaseId, chatTitle);
+    },
+    [ensureChatAvailable],
+  );
+
+  const handleCreateChat = useCallback(async (caseId: string) => {
+    try {
+      const newChat = await createChat(caseId, generateChatTitle());
       setChats((prev) => [newChat, ...prev]);
       setActiveChatId(newChat.id);
       setMessages([]);
-      return newChat.id;
-    };
-
-    const resolvedChatId = await ensureChat();
-    if (!resolvedChatId) {
-      return;
-    }
-
-    setIsStreaming(true);
-    try {
-      const userMessage = await createMessage(resolvedChatId, { role: "user", content });
-      setMessages((prev) => [...prev, userMessage]);
-      setStreamingContent("");
-
-      await streamAssistantMessage(resolvedChatId, { role: "user", content }, (token) => {
-        setStreamingContent((prev) => prev + token);
-      });
-
-      setStreamingContent("");
-      const latestMessages = await fetchMessages(resolvedChatId);
-      setMessages(latestMessages);
-    } catch (error) {
-      console.error("Failed to send message", error);
-      setStreamingContent("An error occurred while generating a response. Please try again.");
-    } finally {
-      setIsStreaming(false);
-    }
-  }
-
-  async function handleCreateChat(caseId: string) {
-    try {
-      const chatTitle = `Discussion ${new Date().toLocaleTimeString()}`;
-      const newChat = await createChat(caseId, chatTitle);
-      setChats((prev) => [newChat, ...prev]);
-      setActiveChatId(newChat.id);
     } catch (error) {
       console.error("Failed to create chat", error);
     }
-  }
+  }, []);
 
   const handleCreateCase = useCallback(async () => {
     if (!userId) {
       return;
     }
     try {
-      const title =
-        prompt("Введите название дела") || `Дело ${new Date().toLocaleString()}`;
-      const chatTitle = `Чат ${new Date().toLocaleTimeString()}`;
-      const { caseItem, chat } = await createCaseWithChat(userId, title, chatTitle);
+      const { caseItem, chat } = await createCaseWithChat(
+        userId,
+        generateCaseTitle(),
+        generateChatTitle(),
+      );
       setCases((prev) => [caseItem, ...prev]);
       setActiveCaseId(caseItem.id);
       setChats([chat]);
