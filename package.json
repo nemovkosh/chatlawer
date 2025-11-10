@@ -1,0 +1,16 @@
+{
+  "name": "legal-ai-assistant",
+  "private": true,
+  "workspaces": [
+    "frontend",
+    "backend-ts"
+  ],
+  "scripts": {
+    "install:all": "npm install --workspaces",
+    "build": "npm run build --workspace frontend",
+    "dev": "vercel dev",
+    "dev:frontend": "npm run dev --workspace frontend",
+    "dev:backend": "cd backend-ts && vercel dev --listen 4000"
+  }
+}
+

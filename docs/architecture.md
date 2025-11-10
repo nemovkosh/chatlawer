@@ -8,12 +8,12 @@
   - `DocumentPanel` to surface uploaded case materials for quick access.
   - `services/api.ts` centralizes REST interactions with the backend, supporting streaming tokens.
 
-- **Backend** — FastAPI with Supabase integration:
-  - RESTful endpoints for `cases`, `documents`, `chats`, and `messages`.
-  - `SupabaseService` wraps Supabase client operations (insert/update/select) and exposes the storage bucket helpers.
-  - `DocumentService` выполняет извлечение текста из PDF, DOCX, TXT и изображений (через Tesseract OCR), а `EmbeddingService` нарезает контент на чанки и сохраняет вектора в Supabase `pgvector`.
-  - `MessageService` orchestrates Retrieval-Augmented Generation (RAG) by fetching relevant embeddings и стримит ответы модели GPT-5 mini по системному метапромпту.
-  - Dependency injection keeps services modular and testable.
+- **Backend** — TypeScript serverless API (Vercel + @vercel/node):
+  - Маршруты `/cases`, `/cases/:id/chats`, `/cases/:id/documents`, `/chats/:id/messages`, `/chats/:id/messages/stream`.
+  - `supabase.ts` использует service role key для CRUD и Supabase Storage.
+  - `documentService` — извлечение текста из PDF (`pdf-parse`), DOCX (`mammoth`), TXT, изображений (`tesseract.js`), сохранение файлов в Supabase Storage и индексация через `EmbeddingService`.
+  - `messageService` — Retrieval-Augmented Generation: загрузка контекстных чанков, стриминг GPT-5 mini, запись ассистентских ответов.
+  - Вся логика — в Node runtime, совместимом с Vercel serverless.
 
 - **Supabase** — Single managed stack:
   - Auth (future) for user management.
@@ -31,9 +31,9 @@
 
 ## Extensibility Notes
 
-- **Document Processing** — При необходимости масштабирования выносите OCR и парсинг крупных файлов в асинхронные воркеры (Celery, Supabase Edge Functions).
-- **Embeddings Pipeline** — Текущая синхронная индексация подходит для MVP; для больших файлов используйте очередь задач и батчевую запись в `document_embeddings`.
+- **Document Processing** — При высоких нагрузках вынесите OCR/парсинг в фоновые очереди (Supabase Edge Functions, Durable queues) и подключите ретраи.
+- **Embeddings Pipeline** — Синхронная индексация подходит для MVP; для крупных документов используйте батчевую генерацию эмбеддингов и bulk insert.
 - **Auth & Security** — Replace demo user handling with Supabase Auth JWT verification and enforce Row-Level Security policies.
 - **Realtime** — Supabase Realtime channels can push message updates to active sessions.
-- **Testing** — Pytest + pytest-asyncio for service layer tests; React Testing Library for frontend interaction coverage.
+- **Testing** — Добавьте интеграционные тесты для API (Vitest/Supertest) и UI тесты (React Testing Library, Playwright).
 

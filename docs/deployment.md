@@ -16,45 +16,37 @@
    ```
 3. Configure branch protection rules on `main` and require pull requests for changes.
 
-## Vercel (Frontend)
+## Vercel (Single Project)
 
-1. Install the Vercel CLI and log in:
+1. В настройках проекта установите **Root Directory** = `.` (корень репозитория), Framework preset — `Vite` или `Other`.
+2. `vercel.json` уже описывает:
+   - build: `npm run build` → собирает фронтенд (`frontend/dist`),
+   - API-функция `api/index.ts` с зависимостями из `backend-ts`.
+3. Перед первым деплоем локально:
    ```bash
-   npm i -g vercel
-   vercel login
-   ```
-2. From the `frontend/` directory, deploy:
-   ```bash
-   cd frontend
+   npm install
+   vercel dev  # smoke-test: http://localhost:5173 фронт, http://localhost:3000/api/... бэкенд
    vercel --prod
    ```
-   Vercel reads `vercel.json` for build and output configuration.
-3. Set environment variables in the Vercel dashboard:
-   - `VITE_API_BASE_URL` → URL of the FastAPI backend.
-   - `VITE_APP_ENV` → Environment label (`production`, `staging`, etc.).
-   - `VITE_DEFAULT_USER_ID` → ID пользователя Supabase/демо-аккаунта (или удалите, если есть полноценная аутентификация).
-4. Enable automatic deployments from GitHub by linking the repository in the Vercel dashboard.
+4. Переменные в Vercel → Project Settings → Environment Variables:
+   - `APP_SUPABASE_URL`, `APP_SUPABASE_SERVICE_ROLE_KEY`, `APP_SUPABASE_STORAGE_BUCKET`
+   - `APP_OPENAI_API_KEY`, опционально `APP_OPENAI_API_BASE`, `APP_SYSTEM_PROMPT`
+   - `APP_OPENAI_MODEL`, `APP_EMBEDDINGS_MODEL`, `APP_CHUNK_SIZE`, `APP_CHUNK_OVERLAP`, `APP_MAX_CONTEXT_CHUNKS`
+   - `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID` (при необходимости). `VITE_API_BASE_URL` можно не задавать — по умолчанию `/api`.
 
-## Backend Hosting
+## Backend Notes
 
-- The FastAPI backend can be hosted on rendering platforms (Render, Railway, Fly.io) or containerized for deployment.
-- Provide the deployed backend URL to the frontend via `VITE_API_BASE_URL`.
-- Ensure Supabase credentials, OpenAI key (`APP_OPENAI_API_KEY`) и при необходимости `APP_SYSTEM_PROMPT` заданы в конфигурации бекенда.
-- Для OCR установите Tesseract на хосте (`apt-get install tesseract-ocr`, `brew install tesseract` и т.д.), иначе извлечение текста из изображений будет пропущено.
+- Tesseract.js использует wasm-бандлы, дополнительных системных пакетов на Vercel не требуется. Для больших очередей OCR рассмотрите вынос в воркер.
+- Supabase storage bucket (`legal-assistant-uploads`) должен существовать заранее.
+- Сервисный ключ Supabase храните только в серверных переменных (`APP_SUPABASE_SERVICE_ROLE_KEY`).
 
 ## Verification
 
-- Before deploying, run:
+- Перед продакшеном:
   ```bash
-  # Backend
-  cd backend
-  poetry run pytest
-  poetry run uvicorn app.main:app --reload
-
-  # Frontend
-  cd frontend
-  npm run build
-  npm run preview
+  npm install
+  npm run build           # vite build фронтенда
+  npx tsc --noEmit --project backend-ts/tsconfig.json
   ```
-- Confirm the chat flow works end-to-end with Supabase and OpenAI credentials in a staging environment.
+- Убедитесь, что RAG-цепочка (загрузка документа → чат) проходит на `vercel dev` с актуальными ключами.
 

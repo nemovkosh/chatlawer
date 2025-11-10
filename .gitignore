@@ -30,9 +30,7 @@ frontend/node_modules/
 frontend/dist/
 frontend/.vite/
 
-# Backend
-backend/.mypy_cache/
-backend/.pytest_cache/
-backend/.ruff_cache/
-backend/.coverage
+backend-ts/node_modules/
+backend-ts/.vercel/
+backend-ts/.turbo/
 

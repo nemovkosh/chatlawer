@@ -1,39 +1,26 @@
 # Legal AI Assistant
 
-End-to-end skeleton for the Legal AI Assistant MVP described in the PRD. The repository contains a FastAPI backend with Supabase integrations and a React + Tailwind frontend that delivers the legal-focused chat UX.
+End-to-end skeleton for the Legal AI Assistant MVP described in the PRD. Репозиторий включает единый Vercel‑совместимый стек: серверлесс-бэкенд на TypeScript с Supabase + OpenAI и React/Vite фронтенд с Tailwind.
 
 ## Project Structure
 
-- `backend/` — FastAPI services, Supabase data access layer, and OpenAI streaming logic.
+- `backend-ts/` — TypeScript serverless backend (Vercel functions) with Supabase + OpenAI integration.
 - `frontend/` — Vite React application with legal chat UI components and streaming client.
 - `docs/` — Architecture notes and design references.
 
 ## Getting Started
 
-### Backend
+### Install & Dev
 
 ```bash
-cd backend
-poetry install
-cp env.example .env
-poetry run uvicorn app.main:app --reload
+npm install               # устанавливает зависимости workspaces (frontend + backend-ts)
+cp backend-ts/env.example backend-ts/.env.local
+cp frontend/env.example frontend/.env.local
+npm run dev               # vercel dev: фронт доступен на 5173, API на http://localhost:3000/api
 ```
 
-Configure your `.env` with Supabase credentials and the OpenAI API key. The backend exposes REST endpoints under `http://localhost:8000` for cases, chats, documents, and messages.
-
-### Frontend
-
-```bash
-cd frontend
-npm install
-cp env.example .env.local
-npm run dev
-```
-
-Configure `frontend/.env.local` (или переменные в Vercel) по образцу `env.example`:
-- `VITE_API_BASE_URL` — URL FastAPI-бэкенда.
-- `VITE_APP_ENV` — окружение (`local`, `staging`, `production`).
-- `VITE_DEFAULT_USER_ID` — демо-пользователь для локальных тестов (может быть заменён на Supabase Auth ID).
+- **Backend secrets** (`APP_*`) задаются в `backend-ts/.env.local` или в Vercel Project Settings.
+- **Frontend env** (`VITE_*`) — в `frontend/.env.local`. По умолчанию `VITE_API_BASE_URL=/api`, поэтому в продакшене фронт обращается к тому же домену.
 
 ### Document Processing Prerequisites
 
@@ -51,9 +38,9 @@ Configure `frontend/.env.local` (или переменные в Vercel) по о�
 
 ## Deployment
 
-- Follow `docs/deployment.md` for GitHub publishing steps and Vercel deployment of the frontend.
-- Supply `VITE_API_BASE_URL` on Vercel to point the UI at the hosted FastAPI backend.
-- Secure backend secrets and Supabase credentials in your hosting platform before going live.
+- Следуйте `docs/deployment.md` — один проект Vercel обслуживает и фронт, и API.
+- В Vercel пропишите `APP_*` секреты для серверлесс-функции и `VITE_*` переменные для фронтенда.
+- Supabase ключи и OpenAI API держите только на серверной стороне.
 
 ## Next Steps
 

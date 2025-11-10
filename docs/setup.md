@@ -6,23 +6,21 @@
    - Apply tables according to the PRD schema (`cases`, `documents`, `chats`, `messages`, `document_embeddings`).
 
 2. **Environment Variables**
-   - Copy `backend/env.example` to `backend/.env` и заполните Supabase + OpenAI (`APP_OPENAI_API_KEY`, при необходимости `APP_OPENAI_API_BASE`, приоритетная модель `APP_OPENAI_MODEL=gpt-5-mini`).
-   - Copy `frontend/env.example` to `frontend/.env.local` (на Vercel внесите значения через Project Settings) и укажите `VITE_API_BASE_URL`, `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID`.
+   - Backend (TypeScript): скопируйте `backend-ts/env.example` в `backend-ts/.env.local` (или задайте переменные в Vercel). Требуются `APP_SUPABASE_*`, `APP_OPENAI_API_KEY`, `APP_SUPABASE_STORAGE_BUCKET`, опционально `APP_SYSTEM_PROMPT`.
+   - Frontend: скопируйте `frontend/env.example` в `frontend/.env.local` и при необходимости обновите `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID` (по умолчанию `VITE_API_BASE_URL=/api` работает без изменений).
 
 3. **System Dependencies**
-   - Для OCR установите Tesseract: `brew install tesseract` (macOS) или `sudo apt-get install tesseract-ocr` (Linux). На Windows используйте официальный установщик.
-   - Убедитесь, что переменная `TESSDATA_PREFIX` указывает на каталог языковых моделей, если используется кастомная локация.
+   - Для локального OCR требуется Tesseract: `brew install tesseract` (macOS) или `sudo apt-get install tesseract-ocr` (Linux). На Windows используйте официальный установщик и при необходимости задайте `TESSDATA_PREFIX`.
 
 4. **Local Development**
-   - Backend: `poetry install && poetry run uvicorn app.main:app --reload`.
-   - Frontend: `npm install && npm run dev`.
-   - Visit `http://localhost:5173` to interact with the UI.
+   - Запустите `npm install` в корне (workspaces).
+   - Поднимите `vercel dev` в корне: фронтенд на `http://localhost:5173`, API — `http://localhost:3000/api/...`.
+   - Для изолированной разработки можно использовать `npm run dev --workspace frontend`.
 
 5. **Embedding Pipeline (Planned)**
-   - Hook document uploads to a background worker that extracts text, chunks content, and stores embeddings.
-   - Use Supabase Edge Functions or an external worker queue (Celery/RQ) for asynchronous indexing.
+   - Для крупного объёма документов перенесите парсинг/эмбеддинги в фоновый воркер (Supabase Edge Functions, очереди).
 
 6. **Testing**
-   - Backend tests via `poetry run pytest`.
-   - Frontend tests (future) with `npm test` once suites are added.
+   - Backend (пока нет автотестов; планируются e2e/интеграционные).
+   - Frontend: `npm run build` и добавить unit/e2e по мере готовности.
 
