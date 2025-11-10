@@ -3,7 +3,7 @@ import type { ChatSummary, CaseSummary } from "../types";
 
 interface CaseSidebarProps {
   cases: CaseSummary[];
-  onRefreshCases: () => void;
+  onCreateCase: () => void;
   activeCaseId: string | null;
   chats: ChatSummary[];
   activeChatId: string | null;
@@ -14,7 +14,7 @@ interface CaseSidebarProps {
 
 export function CaseSidebar({
   cases,
-  onRefreshCases,
+  onCreateCase,
   activeCaseId,
   chats,
   activeChatId,
@@ -28,11 +28,11 @@ export function CaseSidebar({
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-slate-800">Cases</h2>
           <button
-            className="rounded-md border border-slate-200 px-2 py-1 text-xs text-slate-500 hover:bg-slate-100"
-            onClick={onRefreshCases}
+            className="rounded-md border border-slate-200 px-2 py-1 text-xs text-primary-600 hover:bg-primary-50"
+            onClick={onCreateCase}
             type="button"
           >
-            Refresh
+            + New Case
           </button>
         </div>
       </div>
@@ -91,7 +91,9 @@ export function CaseSidebar({
           );
         })}
         {!cases.length && (
-          <div className="px-5 py-6 text-sm text-slate-500">No cases yet. Create one from the backend.</div>
+          <div className="px-5 py-6 text-sm text-slate-500">
+            Нет дел. Нажмите «+ New Case», чтобы начать.
+          </div>
         )}
       </div>
     </aside>

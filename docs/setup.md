@@ -7,7 +7,7 @@
 
 2. **Environment Variables**
    - Backend (TypeScript): скопируйте `backend-ts/env.example` в `backend-ts/.env.local` (или задайте переменные в Vercel). Требуются `APP_SUPABASE_*`, `APP_OPENAI_API_KEY`, `APP_SUPABASE_STORAGE_BUCKET`, опционально `APP_SYSTEM_PROMPT`.
-   - Frontend: скопируйте `frontend/env.example` в `frontend/.env.local` и при необходимости обновите `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID` (по умолчанию `VITE_API_BASE_URL=/api` работает без изменений).
+   - Frontend: скопируйте `frontend/env.example` в `frontend/.env.local` и при необходимости обновите `VITE_APP_ENV`, `VITE_INITIAL_CASE_TITLE` (по умолчанию `VITE_API_BASE_URL=/api` работает без изменений).
 
 3. **Local Development**
    - Запустите `npm install` в корне (workspaces).

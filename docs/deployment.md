@@ -32,7 +32,7 @@
    - `APP_SUPABASE_URL`, `APP_SUPABASE_SERVICE_ROLE_KEY`, `APP_SUPABASE_STORAGE_BUCKET`
    - `APP_OPENAI_API_KEY`, опционально `APP_OPENAI_API_BASE`, `APP_SYSTEM_PROMPT`
    - `APP_OPENAI_MODEL`, `APP_EMBEDDINGS_MODEL`, `APP_CHUNK_SIZE`, `APP_CHUNK_OVERLAP`, `APP_MAX_CONTEXT_CHUNKS`
-   - `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID` (при необходимости). `VITE_API_BASE_URL` можно не задавать — по умолчанию `/api`.
+   - `VITE_APP_ENV`, `VITE_INITIAL_CASE_TITLE` (при необходимости). `VITE_API_BASE_URL` можно не задавать — по умолчанию `/api`.
 
 ## Backend Notes
 
