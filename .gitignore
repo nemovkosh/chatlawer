@@ -1,0 +1,38 @@
+# General
+.DS_Store
+*.log
+*.swp
+*.swo
+*.pyc
+__pycache__/
+dist/
+build/
+.env
+.env.*
+
+# Node
+node_modules/
+npm-debug.log*
+pnpm-lock.yaml
+yarn.lock
+
+# Python / Poetry
+.venv/
+poetry.lock
+*.egg-info/
+
+# IDEs
+.idea/
+.vscode/
+
+# Frontend
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# Backend
+backend/.mypy_cache/
+backend/.pytest_cache/
+backend/.ruff_cache/
+backend/.coverage
+
