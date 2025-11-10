@@ -22,18 +22,13 @@ npm run dev               # vercel dev: фронт доступен на 5173, A
 - **Backend secrets** (`APP_*`) задаются в `backend-ts/.env.local` или в Vercel Project Settings.
 - **Frontend env** (`VITE_*`) — в `frontend/.env.local`. По умолчанию `VITE_API_BASE_URL=/api`, поэтому в продакшене фронт обращается к тому же домену.
 
-### Document Processing Prerequisites
-
-- Для OCR установите Tesseract (`brew install tesseract` / `sudo apt-get install tesseract-ocr` / Windows installer).
-- При необходимости добавьте переменную окружения `TESSDATA_PREFIX`, если языковые модели Tesseract размещены нестандартно.
-
 ## Key Features
 
 - **Case management** — Sidebar groups chats and document context per legal case.
 - **Document awareness** — Document panel surfaces uploaded materials per case; backend ready for text extraction and embeddings.
 - **Streaming chats** — Real-time assistant responses with Markdown rendering and sanitisation.
 - **RAG-ready backend** — Supabase wrappers and message service prepared for embeddings + OpenAI reasoning flow.
-- **Интеллектуальный парсинг документов** — Автоматическое извлечение текста из PDF, DOCX, TXT и изображений (OCR) с индексацией в Supabase `pgvector`.
+- **Интеллектуальный парсинг документов** — Автоматическое извлечение текста из PDF/DOCX/TXT и анализ изображений напрямую через GPT-vision.
 - **Метапромпт бюро** — Встроенный системный промпт для модели GPT-5 mini отражает позиционирование АБ «Немовы и партнёры».
 
 ## Deployment

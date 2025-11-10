@@ -59,28 +59,91 @@ export async function getContextChunks(caseId: string): Promise<string[]> {
   return (chunks ?? []).map((item) => item.content);
 }
 
+function isImageFile(filename: string) {
+  const lower = filename.toLowerCase();
+  return (
+    lower.endsWith(".png") ||
+    lower.endsWith(".jpg") ||
+    lower.endsWith(".jpeg") ||
+    lower.endsWith(".gif") ||
+    lower.endsWith(".bmp") ||
+    lower.endsWith(".webp") ||
+    lower.endsWith(".tiff")
+  );
+}
+
+async function getImageAttachments(caseId: string): Promise<Array<{ url: string; fileName: string }>> {
+  const { data, error } = await supabaseAdmin
+    .from("documents")
+    .select("file_name, file_url")
+    .eq("case_id", caseId);
+  if (error) {
+    throw error;
+  }
+  return (data ?? [])
+    .filter((doc) => doc.file_url && doc.file_name && isImageFile(doc.file_name))
+    .map((doc) => ({
+      url: doc.file_url as string,
+      fileName: doc.file_name as string,
+    }));
+}
+
 export async function* streamAssistantReply({
+  caseId,
   chatHistory,
   contextualChunks,
 }: {
+  caseId: string;
   chatHistory: { role: MessageRole; content: string }[];
   contextualChunks: string[];
 }): AsyncGenerator<string, void, unknown> {
-  const messages: { role: MessageRole | "system"; content: string }[] = [
-    { role: "system", content: settings.SYSTEM_PROMPT },
+  const messages: Array<{ role: string; content: unknown }> = [
+    {
+      role: "system",
+      content: [{ type: "text", text: settings.SYSTEM_PROMPT }],
+    },
   ];
+
   if (contextualChunks.length) {
     messages.push({
       role: "system",
-      content: `Релевантные материалы дела:\n${contextualChunks.join("\n---\n")}`,
+      content: [
+        {
+          type: "text",
+          text: `Релевантные материалы дела:\n${contextualChunks.join("\n---\n")}`,
+        },
+      ],
     });
   }
-  messages.push(...chatHistory);
+
+  const imageAttachments = await getImageAttachments(caseId);
+  if (imageAttachments.length) {
+    messages.push({
+      role: "system",
+      content: [
+        {
+          type: "text",
+          text: "Визуальные материалы дела. Проанализируй изображения при формировании ответа.",
+        },
+        ...imageAttachments.map((attachment) => ({
+          type: "image_url" as const,
+          image_url: { url: attachment.url },
+        })),
+      ],
+    });
+  }
+
+  messages.push(
+    ...chatHistory.map((msg) => ({
+      role: msg.role,
+      content: [{ type: "text", text: msg.content }],
+    })),
+  );
 
   const stream = await openaiClient.chat.completions.create({
     model: settings.OPENAI_MODEL,
     stream: true,
-    messages,
+    messages: messages as any,
   });
 
   for await (const chunk of stream) {

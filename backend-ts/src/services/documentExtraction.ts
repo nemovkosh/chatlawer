@@ -5,34 +5,8 @@ import { join } from "node:path";
 import { randomUUID } from "node:crypto";
 import pdfParse from "pdf-parse";
 import mammoth from "mammoth";
-import { createWorker } from "tesseract.js";
 
 import type { File } from "formidable";
-
-let ocrWorkerPromise: ReturnType<typeof createWorker> | null = null;
-
-async function ensureOcrWorker() {
-  if (!ocrWorkerPromise) {
-    ocrWorkerPromise = createWorker("rus+eng");
-  }
-  return ocrWorkerPromise;
-}
-
-async function extractPdf(buffer: Buffer) {
-  const data = await pdfParse(buffer);
-  return data.text ?? "";
-}
-
-async function extractDocx(buffer: Buffer) {
-  const result = await mammoth.extractRawText({ buffer });
-  return result.value ?? "";
-}
-
-async function extractImage(file: File) {
-  const worker = await ensureOcrWorker();
-  const { data } = await worker.recognize(file.filepath);
-  return data.text ?? "";
-}
 
 function isPdf(mime: string | undefined, filename: string) {
   return mime === "application/pdf" || filename.toLowerCase().endsWith(".pdf");
@@ -49,17 +23,14 @@ function isDoc(mime: string | undefined, filename: string) {
   return mime === "application/msword" || filename.toLowerCase().endsWith(".doc");
 }
 
-function isImage(mime: string | undefined, filename: string) {
-  const lower = filename.toLowerCase();
-  return (
-    (mime && mime.startsWith("image/")) ||
-    lower.endsWith(".png") ||
-    lower.endsWith(".jpg") ||
-    lower.endsWith(".jpeg") ||
-    lower.endsWith(".tif") ||
-    lower.endsWith(".tiff") ||
-    lower.endsWith(".bmp")
-  );
+async function extractPdf(buffer: Buffer) {
+  const data = await pdfParse(buffer);
+  return data.text ?? "";
+}
+
+async function extractDocx(buffer: Buffer) {
+  const result = await mammoth.extractRawText({ buffer });
+  return result.value ?? "";
 }
 
 export async function extractTextFromFile(file: File): Promise<string | null> {
@@ -75,9 +46,6 @@ export async function extractTextFromFile(file: File): Promise<string | null> {
   }
   if (isDoc(mime, name)) {
     return buffer.toString("utf-8");
-  }
-  if (isImage(mime, name)) {
-    return extractImage(file);
   }
   if (mime?.startsWith("text/") || name.toLowerCase().endsWith(".txt")) {
     return buffer.toString("utf-8");

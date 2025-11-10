@@ -11,8 +11,8 @@
 - **Backend** — TypeScript serverless API (Vercel + @vercel/node):
   - Маршруты `/cases`, `/cases/:id/chats`, `/cases/:id/documents`, `/chats/:id/messages`, `/chats/:id/messages/stream`.
   - `supabase.ts` использует service role key для CRUD и Supabase Storage.
-  - `documentService` — извлечение текста из PDF (`pdf-parse`), DOCX (`mammoth`), TXT, изображений (`tesseract.js`), сохранение файлов в Supabase Storage и индексация через `EmbeddingService`.
-  - `messageService` — Retrieval-Augmented Generation: загрузка контекстных чанков, стриминг GPT-5 mini, запись ассистентских ответов.
+  - `documentService` — извлечение текста из PDF (`pdf-parse`), DOCX (`mammoth`), TXT, сохранение файлов в Supabase Storage; изображения отдаются напрямую в GPT-vision без локального OCR.
+  - `messageService` — Retrieval-Augmented Generation: загрузка контекстных чанков, подмешивание изображений в запрос, стриминг GPT-5 mini, запись ассистентских ответов.
   - Вся логика — в Node runtime, совместимом с Vercel serverless.
 
 - **Supabase** — Single managed stack:

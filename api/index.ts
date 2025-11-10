@@ -243,6 +243,7 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
         let assistantBuffer = "";
         try {
           for await (const token of streamAssistantReply({
+            caseId: chat.case_id,
             chatHistory: combinedHistory,
             contextualChunks: contextChunks,
           })) {

@@ -9,18 +9,15 @@
    - Backend (TypeScript): скопируйте `backend-ts/env.example` в `backend-ts/.env.local` (или задайте переменные в Vercel). Требуются `APP_SUPABASE_*`, `APP_OPENAI_API_KEY`, `APP_SUPABASE_STORAGE_BUCKET`, опционально `APP_SYSTEM_PROMPT`.
    - Frontend: скопируйте `frontend/env.example` в `frontend/.env.local` и при необходимости обновите `VITE_APP_ENV`, `VITE_DEFAULT_USER_ID` (по умолчанию `VITE_API_BASE_URL=/api` работает без изменений).
 
-3. **System Dependencies**
-   - Для локального OCR требуется Tesseract: `brew install tesseract` (macOS) или `sudo apt-get install tesseract-ocr` (Linux). На Windows используйте официальный установщик и при необходимости задайте `TESSDATA_PREFIX`.
-
-4. **Local Development**
+3. **Local Development**
    - Запустите `npm install` в корне (workspaces).
    - Поднимите `vercel dev` в корне: фронтенд на `http://localhost:5173`, API — `http://localhost:3000/api/...`.
    - Для изолированной разработки можно использовать `npm run dev --workspace frontend`.
 
-5. **Embedding Pipeline (Planned)**
+4. **Embedding Pipeline (Planned)**
    - Для крупного объёма документов перенесите парсинг/эмбеддинги в фоновый воркер (Supabase Edge Functions, очереди).
 
-6. **Testing**
+5. **Testing**
    - Backend (пока нет автотестов; планируются e2e/интеграционные).
    - Frontend: `npm run build` и добавить unit/e2e по мере готовности.
 
