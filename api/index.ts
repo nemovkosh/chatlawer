@@ -92,6 +92,9 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
   try {
     const url = new URL(req.url ?? "", `https://${req.headers.host}`);
     const segments = getPathSegments(url.pathname);
+    if (segments[0] === "api") {
+      segments.shift();
+    }
 
     if (segments[0] === "cases" && segments.length === 1) {
       if (req.method === "GET") {
