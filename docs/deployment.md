@@ -21,7 +21,7 @@
 1. В настройках проекта установите **Root Directory** = `.` (корень репозитория), Framework preset — `Vite` или `Other`.
 2. `vercel.json` уже описывает:
    - build: `npm run build` → собирает фронтенд (результат выходит в `frontend/dist`),
-   - serverless-функции берутся напрямую из файлов `api/cases/**`, `api/chats/**`; общая логика вынесена в `api/lib`.
+   - API обслуживается catch-all функцией `api/[...slug].ts`, которая маршрутизирует запросы к сервисам из `api/lib`.
 3. Перед первым деплоем локально:
    ```bash
    npm install
