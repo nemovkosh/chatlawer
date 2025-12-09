@@ -3,6 +3,12 @@
   "installCommand": "npm install",
   "buildCommand": "npm run build",
   "outputDirectory": "frontend/dist",
-  "cleanUrls": true
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/usefull/:path*",
+      "destination": "https://j-helper-usefullpage-nais54ukg-kosh1s-projects.vercel.app/usefull/:path*"
+    }
+  ]
 }
 
